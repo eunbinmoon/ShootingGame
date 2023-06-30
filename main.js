@@ -17,6 +17,21 @@ let spacebackgroundImage,
 let spaceshipX = canvas.width / 2 - 32;
 let spaceshipY = canvas.height - 64;
 
+let bulletList = []; //총알들을 저장하는 리스트
+function bullet() {
+  this.x = 0;
+  this.y = 0;
+  this.init = function () {
+    this.x = spaceshipX;
+    this.y = spaceshipY;
+
+    bulletList.push(this);
+  };
+  this.update = function () {
+    this.y -= 7;
+  };
+}
+
 function loadImage() {
   spacebackgroundImage = new Image();
   spacebackgroundImage.src = "images/spacebackground.jpg";
@@ -38,12 +53,20 @@ let keysDown = {};
 function setUpkeyboardListener() {
   document.addEventListener("keydown", function (event) {
     keysDown[event.keyCode] = true;
-    console.log("키다운객체에 들어간 값은?", keysDown);
   });
+
   document.addEventListener("keyup", function (event) {
     delete keysDown[event.keyCode];
-    console.log("클릭 후 ", keysDown);
+    if (event.keyCode === 32) {
+      createBullet(); //총알생성함수
+    }
   });
+}
+
+function createBullet() {
+  let b = new bullet(); //총알 하나 생성
+  b.init();
+  console.log("새로운 총알", bulletList);
 }
 
 function update() {
@@ -53,11 +76,19 @@ function update() {
   } else if (37 in keysDown && spaceshipX > 0) {
     spaceshipX -= 3;
   }
+  //총알의 y좌표 업데이트하는 함수 호출
+  for (let i = 0; i < bulletList.length; i++) {
+    bulletList[i].update();
+  }
 }
 
 function render() {
   ctx.drawImage(spacebackgroundImage, 0, 0, canvas.width, canvas.height);
   ctx.drawImage(spaceshipImage, spaceshipX, spaceshipY, 64, 64);
+
+  for (let i = 0; i < bulletList.length; i++) {
+    ctx.drawImage(bulletImage, bulletList[i].x + 7, bulletList[i].y, 50, 50);
+  }
 }
 
 function main() {
@@ -69,3 +100,10 @@ function main() {
 loadImage();
 setUpkeyboardListener();
 main();
+
+//총알 만들기
+//스페이스바를 누르면 총알 발사
+//총알 발사 = 총알의 y길이 --- x값은 스페이스를 누른 순간의 우주선의 x좌표
+//발사된 총알들은 총알 배열에 저장
+//모든 총알들은 x,y좌표값이 있어야 한다
+// 총알 배열을 가지고 렌더링한다
