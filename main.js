@@ -127,7 +127,7 @@ function update() {
   }
   //총알의 y좌표 업데이트 하는 함수 호출
   for (let i = 0; i < bulletList.length; i++) {
-    bulletList[i].update();
+    if (bulletList[i].alive) bulletList[i].update();
     bulletList[i].checkHit();
   }
   //고스트의 y좌표 업데이트 하는 함수 호츌
@@ -139,7 +139,9 @@ function update() {
 function render() {
   ctx.drawImage(spacebackgroundImage, 0, 0, canvas.width, canvas.height);
   ctx.drawImage(spaceshipImage, spaceshipX, spaceshipY, 64, 64);
-
+  ctx.fillText(`Score:${score}`, 20, 20);
+  ctx.fillStyle = "white";
+  ctx.font = "20px Trebuchet MS";
   for (let i = 0; i < bulletList.length; i++) {
     if (bulletList[i].alive) {
       ctx.drawImage(bulletImage, bulletList[i].x + 7, bulletList[i].y, 50, 50);
